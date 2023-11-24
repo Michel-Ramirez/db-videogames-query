@@ -157,32 +157,69 @@ JOIN videogames v ON v.id = cv.videogame_id;
 
 4- Selezionare i dati di tutte le software house che hanno rilasciato almeno un gioco dopo il 2020, mostrandoli una sola volta (6)
 ```
-
+SELECT sh.*
+FROM software_houses sh 
+JOIN videogames v ON sh.id = software_house_id
+WHERE v.release_date > 2020;
 ```
 
 5- Selezionare i premi ricevuti da ogni software house per i videogiochi che ha prodotto (55)
 ```
-
+SELECT a.*
+FROM awards a
+JOIN award_videogame av ON a.id = av.award_id
+JOIN videogames v ON v.id = av.videogame_id
+JOIN software_houses sh ON sh.id = v.software_house_id;
 ```
 
 6- Selezionare categorie e classificazioni PEGI dei videogiochi che hanno ricevuto recensioni da 4 e 5 stelle, mostrandole una sola volta (3363)
 ```
-
+SELECT DISTINCT v.id, v.name as nome_videogioco, c.name as nome_categoria, pl.name as pegi_name 
+FROM videogames v
+JOIN reviews r ON v.id = r.videogame_id
+JOIN category_videogame cv ON cv.videogame_id = v.id
+JOIN categories c ON c.id = cv.category_id
+JOIN pegi_label_videogame plv ON v.id = plv.videogame_id
+JOIN pegi_labels pl ON pl.id = plv.pegi_label_id
+WHERE r.rating >= 4;
 ```
 
 7- Selezionare quali giochi erano presenti nei tornei nei quali hanno partecipato i giocatori il cui nome inizia per 'S' (474)
 ```
-
+SELECT DISTINCT v.*
+FROM videogames v
+JOIN tournament_videogame tv ON tv.videogame_id = v.id
+JOIN tournaments t ON t.id = tv.tournament_id
+JOIN player_tournament pt ON pt.tournament_id = t.id
+JOIN players p ON p.id = pt.player_id
+WHERE p.name LIKE 'S%';
 ```
 
 8- Selezionare le cittÃ  in cui Ã¨ stato giocato il gioco dell'anno del 2018 (36)
 ```
+SELECT DISTINCT v.*
+FROM videogames v
+JOIN tournament_videogame tv ON tv.videogame_id = v.id
+JOIN tournaments t ON t.id = tv.tournament_id
+JOIN player_tournament pt ON pt.tournament_id = t.id
+JOIN players p ON p.id = pt.player_id
+WHERE p.name LIKE 'S%';
 
 ```
 
 9- Selezionare i giocatori che hanno giocato al gioco piÃ¹ atteso del 2018 in un torneo del 2019 (3306)
 ```
-
+SELECT p.*
+FROM players p
+JOIN player_tournament pt ON pt.player_id = p.id
+JOIN tournaments ts ON ts.id = pt.tournament_id
+JOIN tournament_videogame tv ON tv.tournament_id = ts.id
+JOIN videogames v ON tv.videogame_id = v.id
+JOIN award_videogame av ON v.id = av.videogame_id
+JOIN awards a ON a.id = av.award_id
+WHERE a.name = "Gioco più atteso"
+AND ts.year = 2019
+AND av.year = 2018;
 ```
 
 
